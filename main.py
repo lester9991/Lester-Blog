@@ -153,7 +153,7 @@ def about():
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
-        # send_email(request.form)
+        send_email(request.form)
         return render_template('contact.html')
     else:
         return render_template("contact.html", name="contact")
