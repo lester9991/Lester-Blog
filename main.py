@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import Flask, render_template, redirect, url_for, flash, current_app
+from flask import Flask, render_template, redirect, url_for, flash, current_app, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
@@ -14,6 +14,9 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 import os
+
+from post import send_email
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 ckeditor = CKEditor(app)
@@ -147,9 +150,13 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact")
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    return render_template("contact.html")
+    if request.method == 'POST':
+        send_email(request.form)
+        return render_template('contact.html')
+    else:
+        return render_template("contact.html", name="contact")
 
 
 def admin_only(f):
